@@ -1,0 +1,59 @@
+﻿@model IEnumerable<Call4Pizza_reservation.Models.Order>
+
+@{
+    ViewBag.Title = "List of orders";
+}
+
+<h2>List of orders</h2>
+
+<table class="table">
+    <tr>
+        <th>
+            Meals
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.userId)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.price)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.created)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.received)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            <ul>
+            @foreach( Call4Pizza_reservation.Models.MealsOrder mo in item.MealsOrder )
+            {
+                <li>
+                    @mo.Meal.name | @Html.ActionLink("Details", "Details", "Meal", new { id = mo.Meal.id }, null)
+                </li>
+            }
+            </ul>
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.userId)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.price)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.created)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.received)
+        </td>
+        <td>
+            @Html.ActionLink("Delete", "Delete", new { id=item.id })
+        </td>
+    </tr>
+}
+
+</table>

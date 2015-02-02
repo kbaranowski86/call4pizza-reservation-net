@@ -1,0 +1,61 @@
+﻿@model Call4Pizza_reservation.Models.Order
+
+@{
+    ViewBag.Title = "Details of order";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Details of order</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.MealsOrder.FirstOrDefault().Meal.name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.MealsOrder.FirstOrDefault().Meal.name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.userId)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.userId)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.price)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.price)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.created)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.created)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.received)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.received)
+        </dd>
+
+    </dl>
+    Ingredients
+    <ul>
+        @foreach( Call4Pizza_reservation.Models.Ingredient ing in Model.MealsOrder.Fi )
+    </ul>
+</div>
+<p>
+    @Html.ActionLink("Back to orders list", "Index")
+</p>

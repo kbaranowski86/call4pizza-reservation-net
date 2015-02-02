@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="3d68bc2ac9a747d1bc8f8d4b5d6104ad" Name="Diagram1">
+        <EntityTypeShape EntityType="Model.Ingredient" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model.Meal" Width="1.5" PointX="0.75" PointY="4.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model.MealComposition" Width="1.5" PointX="5.5" PointY="5.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model.MealConstraints" Width="1.5" PointX="5.625" PointY="1.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model.MealsOrder" Width="1.5" PointX="5.875" PointY="8.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model.Order" Width="1.5" PointX="0.75" PointY="8.75" IsExpanded="true" />
+        <AssociationConnector Association="Model.FK_MealComposition_ToTable_1" ManuallyRouted="false" />
+        <AssociationConnector Association="Model.FK_Table_ToTable_1" ManuallyRouted="false" />
+        <AssociationConnector Association="Model.FK_MealComposition_ToTable" ManuallyRouted="false" />
+        <AssociationConnector Association="Model.FK_MealsOrder_ToTable_1" ManuallyRouted="false" />
+        <AssociationConnector Association="Model.FK_Table_ToTable" ManuallyRouted="false" />
+        <AssociationConnector Association="Model.FK_MealsOrder_ToTable" ManuallyRouted="false" />
+        <EntityTypeShape EntityType="Model.MealsGroup" Width="1.5" PointX="0.75" PointY="12.125" />
+        <AssociationConnector Association="Model.FK_Meal_ToTable" />
+        <EntityTypeShape EntityType="Model.MealsGroupConstraints" Width="1.5" PointX="3.375" PointY="6.5" />
+        <AssociationConnector Association="Model.FK_MealsGroupConstraints_ToTable_1" />
+        <AssociationConnector Association="Model.FK_MealsGroupConstraints_ToTable" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

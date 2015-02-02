@@ -1,0 +1,28 @@
+﻿@model IEnumerable<Call4Pizza_reservation.Models.Meal>
+
+@{
+    ViewBag.Title = "AddMeal";
+}
+
+<h2>Add meal to your order - @ViewBag.mealsGroupName</h2>
+
+<ul>
+    @foreach( var meal in Model )
+    {
+        <li>
+            @Html.ActionLink(meal.name, "AddMeal", new { mealId = meal.id })
+            
+            @if( meal.MealComposition.Count > 0 )
+            {
+
+                foreach( var ing in meal.MealComposition.ToList() )
+                {
+                    @:+@ing.Ingredient.name x @ing.ingredientAmount
+                }
+
+            }
+        </li>
+    }
+</ul>
+
+@Html.ActionLink("Back to meals group choose", "ListMealsGroups")
