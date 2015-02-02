@@ -1,0 +1,67 @@
+﻿@model IEnumerable<Call4Pizza_reservation.Models.Meal>
+
+@{
+    ViewBag.Title = "Meals list";
+}
+
+<h2>Meals list</h2>
+
+<p>
+    @Html.ActionLink("Create new meal", "Create") | @Html.ActionLink("Create new ingredient", "Create", "Ingredient")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.basePrice)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.description)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.mealOriginId)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.mealsGroupId)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.basePrice)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.description)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.mealOriginId)
+        </td>
+        <td>
+            @Html.ActionLink(item.MealsGroup.name, "Edit", "MealsGroup", new { id = item.mealsGroupId }, null)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.id }) |
+            @Html.ActionLink("Details", "Details", new { id=item.id }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.id })
+        </td>
+    </tr>
+    <tr>
+        <td colspan="5">
+            <ul>
+                @foreach (var mc in item.MealComposition.ToList())
+                {
+                    <li>@mc.Ingredient.name x @mc.ingredientAmount</li>
+                }
+            </ul>
+        </td>
+    </tr>
+}
+
+</table>

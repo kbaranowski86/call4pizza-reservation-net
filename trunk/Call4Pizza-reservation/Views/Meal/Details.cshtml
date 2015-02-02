@@ -1,0 +1,74 @@
+﻿@model Call4Pizza_reservation.Models.Meal
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Meal</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.basePrice)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.basePrice)
+        </dd>
+
+        <dt>
+            Full price
+        </dt>
+
+        <dd>
+            @(Model.basePrice + Model.MealComposition.Sum(x => x.Ingredient.price))
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.description)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.description)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.mealOriginId)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.mealOriginId)
+        </dd>
+
+        <dt>
+            Ingredietnts:
+        </dt>
+        <dd>
+            <ul>
+                @foreach (Call4Pizza_reservation.Models.MealComposition mc in Model.MealComposition)
+                {
+                    <li>
+                        @mc.Ingredient.name x @mc.ingredientAmount
+                    </li>
+                }
+            </ul>
+        </dd>
+
+    </dl>
+    
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.id }) |
+    @Html.ActionLink("Back to meals list", "Index") |
+    @Html.ActionLink("Back to orders list", "Index", "Order")
+</p>

@@ -1,0 +1,141 @@
+﻿@model Call4Pizza_reservation.Models.Meal
+@using Call4Pizza_reservation.Models
+
+@{
+    ViewBag.Title = "Edit";
+}
+
+<h2>Edit</h2>
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    
+    <div class="form-horizontal">
+        <h4>Meal</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.id)
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.name, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.name, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.name, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.basePrice, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.basePrice, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.basePrice, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.description, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.description, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.description, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.mealOriginId, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.mealOriginId, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.mealOriginId, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Save" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+<h3>Meal constraints</h3>
+@if (ViewBag.ingredientsMealConstraints.Count > 0)
+{
+    <b>List of currently possible ingredients:</b>
+}
+<ul>
+    @foreach (KeyValuePair<Ingredient, MealConstraints> ing in ViewBag.ingredientsMealConstraints)
+    {
+        <li>
+            @ing.Key.name x @ing.Value.maxIngredientAmount
+            [@Html.ActionLink("+", "MaxIngredientAmountIncrease", "MealConstraints", new { mealId = Model.id, ingredientId = ing.Key.id }, null)]
+            [@Html.ActionLink("-", "MaxIngredientAmountDecrease", "MealConstraints", new { mealId = Model.id, ingredientId = ing.Key.id }, null)]
+            [@Html.ActionLink("x", "IngredientRemove", "MealConstraints", new { mealId = Model.id, ingredientId = ing.Key.id }, null)]
+        </li>
+    }
+</ul>
+
+@if (((List<Call4Pizza_reservation.Models.Ingredient>)ViewBag.allIngredients).Where(i => i.MealConstraints.Where(mc => mc.mealId == Model.id).Select(mc => mc.ingredientId).Contains(i.id)).Count() != ((List<Call4Pizza_reservation.Models.Ingredient>)ViewBag.allIngredients).Count )
+{
+    <b>Add ingredients possible to add to meal</b>
+}
+<ul>
+    @foreach (Call4Pizza_reservation.Models.Ingredient ingredient in ViewBag.allIngredients)
+    {
+        if (Model.MealConstraints.Where(mc => mc.ingredientId == ingredient.id).Count() == 0)
+        {
+            <li>
+                @Html.ActionLink(ingredient.name, "Create", "MealConstraints", new { mealId = Model.id, ingredientId = ingredient.id }, null)
+            </li>
+        }
+    }
+</ul>
+
+<hr />
+
+<h3>Meal composition</h3>
+@if (ViewBag.ingredientsMealComposition.Count > 0)
+{
+    <b>List of currently added ingredients:</b>
+}
+<ul>
+    @foreach (KeyValuePair<Ingredient, MealComposition> ing in ViewBag.ingredientsMealComposition)
+    {
+        <li>
+            @ing.Key.name x @ing.Value.ingredientAmount
+            @if(((Dictionary<Ingredient, MealConstraints>) ViewBag.ingredientsMealConstraints).Values.ToList().Where( mc => mc.ingredientId == ing.Key.id ).FirstOrDefault() != null && ing.Value.ingredientAmount < ((Dictionary<Ingredient, MealConstraints>) ViewBag.ingredientsMealConstraints).Values.ToList().Where( mc => mc.ingredientId == ing.Key.id ).FirstOrDefault().maxIngredientAmount )
+            {
+                @:[@Html.ActionLink("+", "IngredientAmountIncrease", "MealComposition", new { mealId = Model.id, ingredientId = ing.Key.id }, null)]
+            }
+            [@Html.ActionLink("-", "IngredientAmountDecrease", "MealComposition", new { mealId = Model.id, ingredientId = ing.Key.id }, null)]
+            [@Html.ActionLink("x", "IngredientRemove", "MealComposition", new { mealId = Model.id, ingredientId = ing.Key.id }, null)]
+        </li>
+    }
+</ul>
+
+@if (Model.MealConstraints.Where(mc => mc.mealId == Model.id && mc.maxIngredientAmount > 0).Count() > 0 && ((List<Call4Pizza_reservation.Models.Ingredient>)ViewBag.allIngredients).Where(i => i.MealComposition.Where(mc => mc.mealId == Model.id).Select(mc => mc.ingredientId).Contains(i.id)).Count() != ViewBag.ingredientsMealConstraints.Keys.Count )
+{
+    <b>Customize meal by adding an ingredient</b>
+}
+
+<ul>
+    @foreach (Call4Pizza_reservation.Models.Ingredient ingredient in ViewBag.allIngredients)
+    {
+        if (Model.MealComposition.Where( mc => mc.ingredientId == ingredient.id ).Count() == 0 && Model.MealConstraints.Where( mc => mc.ingredientId == ingredient.id && mc.maxIngredientAmount > 0 ).Count() > 0 )
+        {
+            <li>
+                @Html.ActionLink(ingredient.name, "Create", "MealComposition", new { mealId = Model.id, ingredientId = ingredient.id }, null)
+            </li>
+        }
+    }
+</ul>
+
+
+
+<div>
+    @Html.ActionLink("Go to meals list", "Index") | @Html.ActionLink("Go to meals groups list", "Index", "MealsGroup")
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

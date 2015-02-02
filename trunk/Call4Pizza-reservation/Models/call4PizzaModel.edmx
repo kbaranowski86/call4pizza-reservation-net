@@ -1,0 +1,593 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="Model.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Ingredient">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="name" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="description" Type="nvarchar" MaxLength="400" />
+          <Property Name="price" Type="float" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Meal">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="name" Type="nvarchar" MaxLength="200" Nullable="false" />
+          <Property Name="basePrice" Type="float" Nullable="false" />
+          <Property Name="description" Type="nvarchar" MaxLength="400" />
+          <Property Name="mealOriginId" Type="int" />
+          <Property Name="mealsGroupId" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="MealComposition">
+          <Key>
+            <PropertyRef Name="mealId" />
+            <PropertyRef Name="ingredientId" />
+          </Key>
+          <Property Name="mealId" Type="int" Nullable="false" />
+          <Property Name="ingredientId" Type="int" Nullable="false" />
+          <Property Name="ingredientAmount" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="MealConstraints">
+          <Key>
+            <PropertyRef Name="mealId" />
+            <PropertyRef Name="ingredientId" />
+          </Key>
+          <Property Name="mealId" Type="int" Nullable="false" />
+          <Property Name="ingredientId" Type="int" Nullable="false" />
+          <Property Name="maxIngredientAmount" Type="int" />
+        </EntityType>
+        <EntityType Name="MealsGroup">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="name" Type="nvarchar" MaxLength="30" Nullable="false" />
+          <Property Name="description" Type="nvarchar" MaxLength="100" />
+        </EntityType>
+        <EntityType Name="MealsGroupConstraints">
+          <Key>
+            <PropertyRef Name="mealsGroupId" />
+            <PropertyRef Name="ingredientId" />
+          </Key>
+          <Property Name="mealsGroupId" Type="int" Nullable="false" />
+          <Property Name="ingredientId" Type="int" Nullable="false" />
+          <Property Name="maxIngredientAmount" Type="int" />
+        </EntityType>
+        <EntityType Name="MealsOrder">
+          <Key>
+            <PropertyRef Name="orderId" />
+            <PropertyRef Name="mealId" />
+          </Key>
+          <Property Name="orderId" Type="int" Nullable="false" />
+          <Property Name="mealId" Type="int" Nullable="false" />
+          <Property Name="amount" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Order">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="userId" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="price" Type="float" Nullable="false" />
+          <Property Name="created" Type="datetime" Nullable="false" />
+          <Property Name="received" Type="datetime" />
+        </EntityType>
+        <Association Name="FK_Meal_ToTable">
+          <End Role="MealsGroup" Type="Self.MealsGroup" Multiplicity="1" />
+          <End Role="Meal" Type="Self.Meal" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MealsGroup">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="Meal">
+              <PropertyRef Name="mealsGroupId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_MealComposition_ToTable">
+          <End Role="Meal" Type="Self.Meal" Multiplicity="1" />
+          <End Role="MealComposition" Type="Self.MealComposition" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Meal">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="MealComposition">
+              <PropertyRef Name="mealId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_MealComposition_ToTable_1">
+          <End Role="Ingredient" Type="Self.Ingredient" Multiplicity="1" />
+          <End Role="MealComposition" Type="Self.MealComposition" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Ingredient">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="MealComposition">
+              <PropertyRef Name="ingredientId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_MealsGroupConstraints_ToTable">
+          <End Role="MealsGroup" Type="Self.MealsGroup" Multiplicity="1" />
+          <End Role="MealsGroupConstraints" Type="Self.MealsGroupConstraints" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MealsGroup">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="MealsGroupConstraints">
+              <PropertyRef Name="mealsGroupId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_MealsGroupConstraints_ToTable_1">
+          <End Role="Ingredient" Type="Self.Ingredient" Multiplicity="1" />
+          <End Role="MealsGroupConstraints" Type="Self.MealsGroupConstraints" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Ingredient">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="MealsGroupConstraints">
+              <PropertyRef Name="ingredientId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_MealsOrder_ToTable">
+          <End Role="Order" Type="Self.Order" Multiplicity="1" />
+          <End Role="MealsOrder" Type="Self.MealsOrder" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Order">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="MealsOrder">
+              <PropertyRef Name="orderId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_MealsOrder_ToTable_1">
+          <End Role="Meal" Type="Self.Meal" Multiplicity="1" />
+          <End Role="MealsOrder" Type="Self.MealsOrder" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Meal">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="MealsOrder">
+              <PropertyRef Name="mealId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Table_ToTable">
+          <End Role="Meal" Type="Self.Meal" Multiplicity="1" />
+          <End Role="MealConstraints" Type="Self.MealConstraints" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Meal">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="MealConstraints">
+              <PropertyRef Name="mealId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Table_ToTable_1">
+          <End Role="Ingredient" Type="Self.Ingredient" Multiplicity="1" />
+          <End Role="MealConstraints" Type="Self.MealConstraints" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Ingredient">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="MealConstraints">
+              <PropertyRef Name="ingredientId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="ModelStoreContainer">
+          <EntitySet Name="Ingredient" EntityType="Self.Ingredient" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Meal" EntityType="Self.Meal" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="MealComposition" EntityType="Self.MealComposition" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="MealConstraints" EntityType="Self.MealConstraints" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="MealsGroup" EntityType="Self.MealsGroup" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="MealsGroupConstraints" EntityType="Self.MealsGroupConstraints" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="MealsOrder" EntityType="Self.MealsOrder" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Order" EntityType="Self.Order" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_Meal_ToTable" Association="Self.FK_Meal_ToTable">
+            <End Role="MealsGroup" EntitySet="MealsGroup" />
+            <End Role="Meal" EntitySet="Meal" />
+          </AssociationSet>
+          <AssociationSet Name="FK_MealComposition_ToTable" Association="Self.FK_MealComposition_ToTable">
+            <End Role="Meal" EntitySet="Meal" />
+            <End Role="MealComposition" EntitySet="MealComposition" />
+          </AssociationSet>
+          <AssociationSet Name="FK_MealComposition_ToTable_1" Association="Self.FK_MealComposition_ToTable_1">
+            <End Role="Ingredient" EntitySet="Ingredient" />
+            <End Role="MealComposition" EntitySet="MealComposition" />
+          </AssociationSet>
+          <AssociationSet Name="FK_MealsGroupConstraints_ToTable" Association="Self.FK_MealsGroupConstraints_ToTable">
+            <End Role="MealsGroup" EntitySet="MealsGroup" />
+            <End Role="MealsGroupConstraints" EntitySet="MealsGroupConstraints" />
+          </AssociationSet>
+          <AssociationSet Name="FK_MealsGroupConstraints_ToTable_1" Association="Self.FK_MealsGroupConstraints_ToTable_1">
+            <End Role="Ingredient" EntitySet="Ingredient" />
+            <End Role="MealsGroupConstraints" EntitySet="MealsGroupConstraints" />
+          </AssociationSet>
+          <AssociationSet Name="FK_MealsOrder_ToTable" Association="Self.FK_MealsOrder_ToTable">
+            <End Role="Order" EntitySet="Order" />
+            <End Role="MealsOrder" EntitySet="MealsOrder" />
+          </AssociationSet>
+          <AssociationSet Name="FK_MealsOrder_ToTable_1" Association="Self.FK_MealsOrder_ToTable_1">
+            <End Role="Meal" EntitySet="Meal" />
+            <End Role="MealsOrder" EntitySet="MealsOrder" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Table_ToTable" Association="Self.FK_Table_ToTable">
+            <End Role="Meal" EntitySet="Meal" />
+            <End Role="MealConstraints" EntitySet="MealConstraints" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Table_ToTable_1" Association="Self.FK_Table_ToTable_1">
+            <End Role="Ingredient" EntitySet="Ingredient" />
+            <End Role="MealConstraints" EntitySet="MealConstraints" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="Model" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="Ingredient">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="name" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="description" Type="String" MaxLength="400" FixedLength="false" Unicode="true" />
+          <Property Name="price" Type="Double" Nullable="false" />
+          <NavigationProperty Name="MealComposition" Relationship="Self.FK_MealComposition_ToTable_1" FromRole="Ingredient" ToRole="MealComposition" />
+          <NavigationProperty Name="MealConstraints" Relationship="Self.FK_Table_ToTable_1" FromRole="Ingredient" ToRole="MealConstraints" />
+          <NavigationProperty Name="MealsGroupConstraints" Relationship="Model.FK_MealsGroupConstraints_ToTable_1" FromRole="Ingredient" ToRole="MealsGroupConstraints" />
+        </EntityType>
+        <EntityType Name="Meal">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="name" Type="String" MaxLength="200" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="basePrice" Type="Double" Nullable="false" />
+          <Property Name="description" Type="String" MaxLength="400" FixedLength="false" Unicode="true" />
+          <Property Name="mealOriginId" Type="Int32" />
+          <NavigationProperty Name="MealComposition" Relationship="Self.FK_MealComposition_ToTable" FromRole="Meal" ToRole="MealComposition" />
+          <NavigationProperty Name="MealsOrder" Relationship="Self.FK_MealsOrder_ToTable_1" FromRole="Meal" ToRole="MealsOrder" />
+          <NavigationProperty Name="MealConstraints" Relationship="Self.FK_Table_ToTable" FromRole="Meal" ToRole="MealConstraints" />
+          <Property Name="mealsGroupId" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="MealsGroup" Relationship="Model.FK_Meal_ToTable" FromRole="Meal" ToRole="MealsGroup" />
+        </EntityType>
+        <EntityType Name="MealComposition">
+          <Key>
+            <PropertyRef Name="mealId" />
+            <PropertyRef Name="ingredientId" />
+          </Key>
+          <Property Name="mealId" Type="Int32" Nullable="false" />
+          <Property Name="ingredientId" Type="Int32" Nullable="false" />
+          <Property Name="ingredientAmount" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Ingredient" Relationship="Self.FK_MealComposition_ToTable_1" FromRole="MealComposition" ToRole="Ingredient" />
+          <NavigationProperty Name="Meal" Relationship="Self.FK_MealComposition_ToTable" FromRole="MealComposition" ToRole="Meal" />
+        </EntityType>
+        <EntityType Name="MealConstraints">
+          <Key>
+            <PropertyRef Name="mealId" />
+            <PropertyRef Name="ingredientId" />
+          </Key>
+          <Property Name="mealId" Type="Int32" Nullable="false" />
+          <Property Name="ingredientId" Type="Int32" Nullable="false" />
+          <Property Name="maxIngredientAmount" Type="Int32" />
+          <NavigationProperty Name="Ingredient" Relationship="Self.FK_Table_ToTable_1" FromRole="MealConstraints" ToRole="Ingredient" />
+          <NavigationProperty Name="Meal" Relationship="Self.FK_Table_ToTable" FromRole="MealConstraints" ToRole="Meal" />
+        </EntityType>
+        <EntityType Name="MealsOrder">
+          <Key>
+            <PropertyRef Name="orderId" />
+            <PropertyRef Name="mealId" />
+          </Key>
+          <Property Name="orderId" Type="Int32" Nullable="false" />
+          <Property Name="mealId" Type="Int32" Nullable="false" />
+          <Property Name="amount" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Meal" Relationship="Self.FK_MealsOrder_ToTable_1" FromRole="MealsOrder" ToRole="Meal" />
+          <NavigationProperty Name="Order" Relationship="Self.FK_MealsOrder_ToTable" FromRole="MealsOrder" ToRole="Order" />
+        </EntityType>
+        <EntityType Name="Order">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="userId" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="price" Type="Double" Nullable="false" />
+          <Property Name="created" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="received" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="MealsOrder" Relationship="Self.FK_MealsOrder_ToTable" FromRole="Order" ToRole="MealsOrder" />
+        </EntityType>
+        <Association Name="FK_MealComposition_ToTable_1">
+          <End Role="Ingredient" Type="Self.Ingredient" Multiplicity="1" />
+          <End Role="MealComposition" Type="Self.MealComposition" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Ingredient">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="MealComposition">
+              <PropertyRef Name="ingredientId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Table_ToTable_1">
+          <End Role="Ingredient" Type="Self.Ingredient" Multiplicity="1" />
+          <End Role="MealConstraints" Type="Self.MealConstraints" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Ingredient">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="MealConstraints">
+              <PropertyRef Name="ingredientId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_MealComposition_ToTable">
+          <End Role="Meal" Type="Self.Meal" Multiplicity="1" />
+          <End Role="MealComposition" Type="Self.MealComposition" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Meal">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="MealComposition">
+              <PropertyRef Name="mealId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_MealsOrder_ToTable_1">
+          <End Role="Meal" Type="Self.Meal" Multiplicity="1" />
+          <End Role="MealsOrder" Type="Self.MealsOrder" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Meal">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="MealsOrder">
+              <PropertyRef Name="mealId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Table_ToTable">
+          <End Role="Meal" Type="Self.Meal" Multiplicity="1" />
+          <End Role="MealConstraints" Type="Self.MealConstraints" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Meal">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="MealConstraints">
+              <PropertyRef Name="mealId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_MealsOrder_ToTable">
+          <End Role="Order" Type="Self.Order" Multiplicity="1" />
+          <End Role="MealsOrder" Type="Self.MealsOrder" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Order">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="MealsOrder">
+              <PropertyRef Name="orderId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="call4PizzaDb" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Ingredient" EntityType="Self.Ingredient" />
+          <EntitySet Name="Meal" EntityType="Self.Meal" />
+          <EntitySet Name="MealComposition" EntityType="Self.MealComposition" />
+          <EntitySet Name="MealConstraints" EntityType="Self.MealConstraints" />
+          <EntitySet Name="MealsOrder" EntityType="Self.MealsOrder" />
+          <EntitySet Name="Order" EntityType="Self.Order" />
+          <AssociationSet Name="FK_MealComposition_ToTable_1" Association="Self.FK_MealComposition_ToTable_1">
+            <End Role="Ingredient" EntitySet="Ingredient" />
+            <End Role="MealComposition" EntitySet="MealComposition" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Table_ToTable_1" Association="Self.FK_Table_ToTable_1">
+            <End Role="Ingredient" EntitySet="Ingredient" />
+            <End Role="MealConstraints" EntitySet="MealConstraints" />
+          </AssociationSet>
+          <AssociationSet Name="FK_MealComposition_ToTable" Association="Self.FK_MealComposition_ToTable">
+            <End Role="Meal" EntitySet="Meal" />
+            <End Role="MealComposition" EntitySet="MealComposition" />
+          </AssociationSet>
+          <AssociationSet Name="FK_MealsOrder_ToTable_1" Association="Self.FK_MealsOrder_ToTable_1">
+            <End Role="Meal" EntitySet="Meal" />
+            <End Role="MealsOrder" EntitySet="MealsOrder" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Table_ToTable" Association="Self.FK_Table_ToTable">
+            <End Role="Meal" EntitySet="Meal" />
+            <End Role="MealConstraints" EntitySet="MealConstraints" />
+          </AssociationSet>
+          <AssociationSet Name="FK_MealsOrder_ToTable" Association="Self.FK_MealsOrder_ToTable">
+            <End Role="Order" EntitySet="Order" />
+            <End Role="MealsOrder" EntitySet="MealsOrder" />
+          </AssociationSet>
+          <EntitySet Name="MealsGroup" EntityType="Model.MealsGroup" />
+          <AssociationSet Name="FK_Meal_ToTable" Association="Model.FK_Meal_ToTable">
+            <End Role="MealsGroup" EntitySet="MealsGroup" />
+            <End Role="Meal" EntitySet="Meal" />
+          </AssociationSet>
+          <EntitySet Name="MealsGroupConstraints" EntityType="Model.MealsGroupConstraints" />
+          <AssociationSet Name="FK_MealsGroupConstraints_ToTable_1" Association="Model.FK_MealsGroupConstraints_ToTable_1">
+            <End Role="Ingredient" EntitySet="Ingredient" />
+            <End Role="MealsGroupConstraints" EntitySet="MealsGroupConstraints" />
+          </AssociationSet>
+          <AssociationSet Name="FK_MealsGroupConstraints_ToTable" Association="Model.FK_MealsGroupConstraints_ToTable">
+            <End Role="MealsGroup" EntitySet="MealsGroup" />
+            <End Role="MealsGroupConstraints" EntitySet="MealsGroupConstraints" />
+          </AssociationSet>
+        </EntityContainer>
+        <EntityType Name="MealsGroup">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="name" Type="String" Nullable="false" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="description" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Meal" Relationship="Model.FK_Meal_ToTable" FromRole="MealsGroup" ToRole="Meal" />
+          <NavigationProperty Name="MealsGroupConstraints" Relationship="Model.FK_MealsGroupConstraints_ToTable" FromRole="MealsGroup" ToRole="MealsGroupConstraints" />
+        </EntityType>
+        <Association Name="FK_Meal_ToTable">
+          <End Type="Model.MealsGroup" Role="MealsGroup" Multiplicity="1" />
+          <End Type="Model.Meal" Role="Meal" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MealsGroup">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="Meal">
+              <PropertyRef Name="mealsGroupId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="MealsGroupConstraints">
+          <Key>
+            <PropertyRef Name="mealsGroupId" />
+            <PropertyRef Name="ingredientId" />
+          </Key>
+          <Property Name="mealsGroupId" Type="Int32" Nullable="false" />
+          <Property Name="ingredientId" Type="Int32" Nullable="false" />
+          <Property Name="maxIngredientAmount" Type="Int32" />
+          <NavigationProperty Name="Ingredient" Relationship="Model.FK_MealsGroupConstraints_ToTable_1" FromRole="MealsGroupConstraints" ToRole="Ingredient" />
+          <NavigationProperty Name="MealsGroup" Relationship="Model.FK_MealsGroupConstraints_ToTable" FromRole="MealsGroupConstraints" ToRole="MealsGroup" />
+        </EntityType>
+        <Association Name="FK_MealsGroupConstraints_ToTable_1">
+          <End Type="Model.Ingredient" Role="Ingredient" Multiplicity="1" />
+          <End Type="Model.MealsGroupConstraints" Role="MealsGroupConstraints" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Ingredient">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="MealsGroupConstraints">
+              <PropertyRef Name="ingredientId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_MealsGroupConstraints_ToTable">
+          <End Type="Model.MealsGroup" Role="MealsGroup" Multiplicity="1" />
+          <End Type="Model.MealsGroupConstraints" Role="MealsGroupConstraints" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MealsGroup">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="MealsGroupConstraints">
+              <PropertyRef Name="mealsGroupId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="ModelStoreContainer" CdmEntityContainer="call4PizzaDb">
+          <EntitySetMapping Name="Ingredient">
+            <EntityTypeMapping TypeName="Model.Ingredient">
+              <MappingFragment StoreEntitySet="Ingredient">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="description" ColumnName="description" />
+                <ScalarProperty Name="price" ColumnName="price" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Meal">
+            <EntityTypeMapping TypeName="Model.Meal">
+              <MappingFragment StoreEntitySet="Meal">
+                <ScalarProperty Name="mealsGroupId" ColumnName="mealsGroupId" />
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="basePrice" ColumnName="basePrice" />
+                <ScalarProperty Name="description" ColumnName="description" />
+                <ScalarProperty Name="mealOriginId" ColumnName="mealOriginId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="MealComposition">
+            <EntityTypeMapping TypeName="Model.MealComposition">
+              <MappingFragment StoreEntitySet="MealComposition">
+                <ScalarProperty Name="mealId" ColumnName="mealId" />
+                <ScalarProperty Name="ingredientId" ColumnName="ingredientId" />
+                <ScalarProperty Name="ingredientAmount" ColumnName="ingredientAmount" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="MealConstraints">
+            <EntityTypeMapping TypeName="Model.MealConstraints">
+              <MappingFragment StoreEntitySet="MealConstraints">
+                <ScalarProperty Name="mealId" ColumnName="mealId" />
+                <ScalarProperty Name="ingredientId" ColumnName="ingredientId" />
+                <ScalarProperty Name="maxIngredientAmount" ColumnName="maxIngredientAmount" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="MealsOrder">
+            <EntityTypeMapping TypeName="Model.MealsOrder">
+              <MappingFragment StoreEntitySet="MealsOrder">
+                <ScalarProperty Name="orderId" ColumnName="orderId" />
+                <ScalarProperty Name="mealId" ColumnName="mealId" />
+                <ScalarProperty Name="amount" ColumnName="amount" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Order">
+            <EntityTypeMapping TypeName="Model.Order">
+              <MappingFragment StoreEntitySet="Order">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="userId" ColumnName="userId" />
+                <ScalarProperty Name="price" ColumnName="price" />
+                <ScalarProperty Name="created" ColumnName="created" />
+                <ScalarProperty Name="received" ColumnName="received" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="MealsGroup">
+            <EntityTypeMapping TypeName="Model.MealsGroup">
+              <MappingFragment StoreEntitySet="MealsGroup">
+                <ScalarProperty Name="description" ColumnName="description" />
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="id" ColumnName="id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="MealsGroupConstraints">
+            <EntityTypeMapping TypeName="Model.MealsGroupConstraints">
+              <MappingFragment StoreEntitySet="MealsGroupConstraints">
+                <ScalarProperty Name="maxIngredientAmount" ColumnName="maxIngredientAmount" />
+                <ScalarProperty Name="ingredientId" ColumnName="ingredientId" />
+                <ScalarProperty Name="mealsGroupId" ColumnName="mealsGroupId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="false" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

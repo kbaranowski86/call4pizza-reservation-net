@@ -1,0 +1,22 @@
+﻿@model IEnumerable<Call4Pizza_reservation.Models.MealsGroup>
+
+@{
+    ViewBag.Title = "Choose meals group";
+}
+
+<h2>Choose meals group</h2>
+
+<table class="table">
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.ActionLink(item.name, "AddMeal", "Order", new { mealsGroupId = item.id }, null)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.description)
+        </td>
+    </tr>
+}
+
+</table>

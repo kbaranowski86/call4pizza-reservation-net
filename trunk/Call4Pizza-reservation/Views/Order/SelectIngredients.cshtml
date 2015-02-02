@@ -1,0 +1,50 @@
+﻿@model ICollection<Call4Pizza_reservation.Library.TempOrderMeal>
+
+@{
+    ViewBag.Title = "SelectIngredients";
+}
+
+<h2>Customize your order</h2>
+
+<ul>
+    @foreach( var meal in Model )
+    {
+        <li>
+            <b>@((ViewBag.selectedMealsObj as ICollection<Call4Pizza_reservation.Models.Meal>).Where( m => m.id == meal.id ).FirstOrDefault().name)</b> x @meal.mealAmount 
+            [@Html.ActionLink("+", "MealAmountIncrease", new { mealListIndex = ((System.Collections.Generic.List<Call4Pizza_reservation.Library.TempOrderMeal>)Model).IndexOf(meal) })]
+            [@Html.ActionLink("-", "MealAmountDecrease", new { mealListIndex = ((System.Collections.Generic.List<Call4Pizza_reservation.Library.TempOrderMeal>)Model).IndexOf(meal) })]
+            [@Html.ActionLink("x", "MealRemove", new { mealListIndex = ((System.Collections.Generic.List<Call4Pizza_reservation.Library.TempOrderMeal>)Model).IndexOf(meal) })]
+            <ul>
+                @foreach( KeyValuePair<int,int> mi in meal.mealIngredients )
+                {
+                    <li>
+                        @((ViewBag.allIngredients as ICollection<Call4Pizza_reservation.Models.Ingredient>).Where( i => i.id == mi.Key ).FirstOrDefault().name) x @mi.Value 
+                        @if( mi.Value < ((List<Call4Pizza_reservation.Models.MealConstraints>) ViewBag.selectedMealsConstraints).Where( mc => mc.mealId == meal.id && mc.ingredientId == mi.Key ).FirstOrDefault().maxIngredientAmount )
+                        {
+                            @:[@Html.ActionLink("+", "IngredientAmountIncrease", new { mealListIndex = ((System.Collections.Generic.List<Call4Pizza_reservation.Library.TempOrderMeal>)Model).IndexOf(meal), ingredientId = mi.Key })]
+                        }
+                        [@Html.ActionLink("-", "IngredientAmountDecrease", new { mealListIndex = ((System.Collections.Generic.List<Call4Pizza_reservation.Library.TempOrderMeal>)Model).IndexOf(meal), ingredientId = mi.Key })]
+                        [@Html.ActionLink("x", "IngredientRemove", new { mealListIndex = ((System.Collections.Generic.List<Call4Pizza_reservation.Library.TempOrderMeal>)Model).IndexOf(meal), ingredientId = mi.Key })]
+                    </li>
+                }
+            </ul>
+            <b>Customize meal by adding an ingredient</b>
+            <ul>
+                @foreach( Call4Pizza_reservation.Models.Ingredient ingredient in ViewBag.allIngredients )
+                {
+                    if( (meal as Call4Pizza_reservation.Library.TempOrderMeal).mealIngredients.ContainsKey( ingredient.id ) == false &&
+                        ((List<Call4Pizza_reservation.Models.MealConstraints>) ViewBag.selectedMealsConstraints).Where( mc => mc.mealId == meal.id && mc.ingredientId == ingredient.id ).FirstOrDefault() != null
+                    )
+                    {
+                        <li>
+                            @Html.ActionLink(ingredient.name, "IngredientAdd", new { mealListIndex = ((System.Collections.Generic.List<Call4Pizza_reservation.Library.TempOrderMeal>)Model).IndexOf(meal), ingredientId = ingredient.id })
+                        </li>
+                    }
+                }
+            </ul>
+            <br />
+        </li>
+    }
+</ul>
+@Html.ActionLink("Add another meal", "ListMealsGroups") | 
+@Html.ActionLink("Submit order", "Create")
