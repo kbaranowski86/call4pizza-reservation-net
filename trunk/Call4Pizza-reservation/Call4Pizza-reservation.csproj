@@ -326,7 +326,7 @@
   <ItemGroup>
     <Folder Include="Views\Base\" />
     <Folder Include="Views\MealConstraints\" />
-    <Folder Include="Views\MealsGroupIngredients\" />
+    <Folder Include="Views\MealsGroupConstraints\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
